@@ -1,0 +1,35 @@
+{
+  "name": "couchdb-client",
+  "description": "Interact with CouchDB.",
+  "version": "0.0.0",
+  "author": "Sean Lang",
+  "bin": {
+    "couch": "./bin/index.js"
+  },
+  "dependencies": {
+    "JSONStream": "^1.1.1",
+    "argparse": "^1.0.7",
+    "bluebird": "^3.3.5",
+    "from2-array": "0.0.4",
+    "lodash": "^4.11.1",
+    "node-fetch": "^1.5.1",
+    "pump": "^1.0.1",
+    "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "coffee-script": "^1.10.0",
+    "mocha": "^2.4.5"
+  },
+  "keywords": [
+    "couchdb",
+    "nano",
+    "promise",
+    "stream"
+  ],
+  "license": "GPL-3.0",
+  "main": "lib",
+  "repository": "git://github.com/slang800/couchdb-client.git",
+  "scripts": {
+    "test": "mocha"
+  }
+}
