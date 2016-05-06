@@ -10,6 +10,10 @@ CouchDB Client is an [npm](http://npmjs.org/package/couchdb-client) package, so 
 npm install couchdb-client --save
 ```
 
+## Usage
+
+If you want pretty printing, pipe the output into [jq](https://stedolan.github.io/jq/manual/).
+
 ## Similar Tools
 
 - [couchdb-utils](https://github.com/awilliams/couchdb-utils)
