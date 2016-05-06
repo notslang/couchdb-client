@@ -17,3 +17,4 @@ If you want pretty printing, pipe the output into [jq](https://stedolan.github.i
 ## Similar Tools
 
 - [couchdb-utils](https://github.com/awilliams/couchdb-utils)
+- [futon (cli)](https://www.npmjs.com/package/futon)
