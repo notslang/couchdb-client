@@ -1,9 +1,9 @@
-databaseArg = (parser, required = true) ->
+databaseArg = (parser) ->
   parser.addArgument(
     ['-d', '--database']
     dest: 'db'
     help: 'The name of the database to use.'
-    required: required
+    required: true
   )
 
 databaseListArg = (parser) ->
