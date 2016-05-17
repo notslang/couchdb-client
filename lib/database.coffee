@@ -2,6 +2,7 @@ BPromise = require 'bluebird'
 JSONStream = require 'JSONStream'
 fetch = require 'node-fetch'
 isEqual = require 'lodash/isEqual'
+map = require 'through2'
 pickBy = require 'lodash/pickBy'
 queryString = require 'querystring'
 url = require 'url'
@@ -245,9 +246,70 @@ class CouchDB
           throw err
       )
 
-  # returns writeable stream, where you pass in the document object and get out
-  # errors or nothing
-  put: ->
+  ###*
+   * Send a request to the _bulk_docs endpoint.
+   * @param {String} docBuffer A stringified array of docs
+   * @return {Promise}
+  ###
+  _bulkDocs: (docs) =>
+    fetch(
+      "#{@url}/_bulk_docs"
+      method: 'POST'
+      body: "{\"docs\":#{docs}}"
+      headers: @_getHeaders()
+      credentials: 'include'
+    ).then(
+      checkStatus
+    ).then((response) ->
+      response.json()
+    )
+
+  ###*
+   * @param {Number} [options.bufferSize=10000] The length of the buffer
+     measured in chars. The buffer is built of stringified JSON documents, so
+     this setting offers _rough_ control over the size of each request. We try
+     to reach this buffer length before sending a request, but we will exceed it
+     by up to `JSON.stringify(doc).length - 1` and the last request we send will
+     be shorter. Increasing this will result in fewer requests, more memory
+     usage, and (probably) faster throughput. Decreasing this will lower your
+     time between requests (assuming a consistent stream speed), and reduce
+     memory usage.
+   * @return {DuplexStream} An objectMode stream that we can write documents to
+     and read conflicts/errors from. Non-fatal errors (like conflicts) are
+     emitted from the stream as objects because you can fix conflicts and
+     resubmit the doc. Writing to this stream does not gaurentee that the
+     document will be written to the DB. You need to make sure that the stream
+     ends correctly or docs at the end could be lost.
+  ###
+  put: ({bufferSize} = {}) =>
+    bufferSize ?= 10000
+    buffer = ''
+    flushBuffer = (cb, push) =>
+      if buffer is '' then return cb()
+      @_bulkDocs("[#{buffer}]").then((res) ->
+        # it worked, clear out the buffer. if we ever decided to do concurrent
+        # requests this part would have to change, but since we don't take in
+        # any docs while the request is being made we can safely empty the
+        # buffer here
+        buffer = ''
+        push(entry) for entry in res
+        cb(null)
+      ).catch((err) ->
+        cb(err)
+      )
+
+    handleDoc = (doc, enc, cb) ->
+      # we build up a string as we go to prevent the docs from being mutated &
+      # because we would need to stringify it anyway before calling _bulkDocs
+      doc = JSON.stringify(doc)
+      buffer += if buffer is '' then doc else ",#{doc}"
+      if buffer.length > bufferSize
+        flushBuffer(cb, @push.bind(this))
+      else
+        cb()
+
+    map(objectMode: true, handleDoc, (cb) -> flushBuffer(cb, @push.bind(this)))
+
 
   ###*
    * Post a single document to the database.
