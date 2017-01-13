@@ -1,13 +1,13 @@
 # CouchDB Client
 
-[![Build Status](http://img.shields.io/travis/slang800/couchdb-client.svg?style=flat-square)](https://travis-ci.org/slang800/couchdb-client) [![NPM version](http://img.shields.io/npm/v/couchdb-client.svg?style=flat-square)](https://www.npmjs.org/package/couchdb-client) [![NPM license](http://img.shields.io/npm/l/couchdb-client.svg?style=flat-square)](https://www.npmjs.org/package/couchdb-client)
+[![Build Status](http://img.shields.io/travis/slang800/slang-couchdb.svg?style=flat-square)](https://travis-ci.org/slang800/slang-couchdb) [![NPM version](http://img.shields.io/npm/v/slang-couchdb.svg?style=flat-square)](https://www.npmjs.org/package/slang-couchdb) [![NPM license](http://img.shields.io/npm/l/slang-couchdb.svg?style=flat-square)](https://www.npmjs.org/package/slang-couchdb)
 
 ## Install
 
-CouchDB Client is an [npm](http://npmjs.org/package/couchdb-client) package, so it can be installed into your project like this:
+CouchDB Client is an [npm](http://npmjs.org/package/slang-couchdb) package, so it can be installed into your project like this:
 
 ```bash
-npm install couchdb-client --save
+npm install slang-couchdb --save
 ```
 
 ## Usage
