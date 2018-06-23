@@ -510,8 +510,6 @@ class CouchDB
 
   viewCleanup: ->
 
-  destroy: ->
-
   status: ->
     fetch(
       @url
