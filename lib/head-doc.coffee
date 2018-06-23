@@ -1,19 +1,12 @@
-BPromise = require 'bluebird'
-fetch = require 'node-fetch'
-{checkStatus} = require './util'
-
-headDoc = (db, id) =>
-  BPromise.resolve(
-    fetch(
-      "#{db.url}/#{encodeURIComponent(id)}"
-      credentials: 'include'
-      headers: db._getHeaders()
-      method: 'HEAD'
-    )
-  ).then(
-    checkStatus
-  ).then((response) ->
-    {}
+headDoc = (db, id) ->
+  db._fetch(
+    "#{encodeURIComponent(id)}"
+    method: 'HEAD'
+  ).then(({status, headers}) ->
+    {
+      status
+      requestId: headers.get('x-couch-request-id')
+    }
   )
 
 module.exports = headDoc

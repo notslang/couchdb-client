@@ -12,27 +12,121 @@ DB_STATS_NAME_MAP = require './db-stats-name-map'
 DB_NOT_FOUND_RE = /^db_not_found: /
 
 class CouchDB
-  auth: ''
-  dbName: ''
-  url: ''
+  auth: null
+  dbName: null
+  _sessionCookie: null
+  _sessionStartTime: null
+  sessionTimeout: null
+  url: null
 
-  constructor: (rawUrl) ->
+  _outstandingCookieAuthRequests: null
+
+  ###*
+   * @param {String} rawUrl
+   * @param {Integer} options.sessionTimeout = 600000 The session timeout set on
+     the server. Providing this accurately lets us know that a session has
+     expired before we send a request that fails, letting us preemtively get a
+     new token.
+   * @return {undefined}
+  ###
+  constructor: (rawUrl, {@sessionTimeout = 600000} = {}) ->
     urlObj = url.parse(rawUrl)
     @dbName = urlObj.pathname[1...] # cut off leading slash
     @auth = urlObj.auth
     urlObj.auth = ''
-    @url = url.format(urlObj)
+    @url = url.format(urlObj) + '/'
+
     if @dbName isnt '_replicator'
       urlObj.pathname = '_replicator'
       @replicatorDB = new CouchDB(url.format(urlObj))
 
-  _getFetchOptions: ->
-    headers =
+  _getFetchOptions: ({authType, method, body}) =>
+    if @auth? then authType ?= 'cookie'
+
+    # construct the options object from scratch to avoid cloning
+    options = {method, body}
+    options.headers =
       'Accept': 'application/json'
       'Content-Type': 'application/json'
-    if @auth?
-      headers['Authorization'] = "Basic #{new Buffer(@auth).toString('base64')}"
-    return headers
+
+    if authType is 'cookie'
+      return @_cookieAuth().then(({sessionCookie}) ->
+        options.headers['Cookie'] = sessionCookie
+        return options
+      )
+
+    if authType is 'basic'
+      options.headers['Authorization'] = (
+        "Basic #{new Buffer(@auth).toString('base64')}"
+      )
+      options.credentials ?= 'include'
+    Promise.resolve(options)
+
+  ###*
+   * This is a wrapper function that checks on the sessionCookie to ensure it's
+     not expired, checks to see if we are waiting for a `/_session` request to
+     finish (reusing the existing request if we are), and if needed, makes a new
+     request for an updated sessionCookie.
+   * @return {Promise} A promise for the updated sessionCookie.
+  ###
+  _cookieAuth: =>
+    # subtract 500ms to account for incorrect clocks and request time
+    if @_sessionCookie? and
+       (Date.now() - @_sessionStartTime) < (@sessionTimeout - 500)
+      return Promise.resolve(sessionCookie: @_sessionCookie)
+
+    if @_outstandingCookieAuthRequests is null
+      @_outstandingCookieAuthRequests = []
+      @_updateCookieAuth().then(({sessionCookie}) =>
+        @_sessionCookie = sessionCookie
+        @_sessionStartTime = Date.now()
+        resolve({sessionCookie}) for resolve in @_outstandingCookieAuthRequests
+        @_outstandingCookieAuthRequests = null
+      )
+
+    # wait for the result of the request to `/_session` that we've already made
+    new Promise((resolve) => @_outstandingCookieAuthRequests.push(resolve))
+
+  # do the actual request
+  _updateCookieAuth: =>
+    [name, password] = @auth.split(':')
+    @_fetch(
+      '/_session'
+      authType: false
+      method: 'POST'
+      body: JSON.stringify({name, password})
+    ).then((response) ->
+      return {sessionCookie: response.headers.get('set-cookie')}
+    )
+
+  ###*
+   * Runs fetch on a given URL, but injects database-specific auth / headers,
+     handles retries, and checks the response status code.
+   * @param {String} urlSegment [description]
+   * @param {Object} options = {} The options to be passed to fetch.
+   * @return {Promise}
+  ###
+  _fetch: (urlSegment, options = {}) =>
+    # hardcoded for now
+    retries = 10
+    retryDelay = 1000
+    new Promise((resolve, reject) =>
+      wrappedFetch = (n) =>
+        @_getFetchOptions(options).then((fetchOptions) =>
+          fetch(url.resolve(@url, urlSegment), fetchOptions)
+        ).then(
+          checkStatus
+        ).then(
+          resolve
+        ).catch((err) ->
+          err.retries = retries - n
+          if err.response?.status? and err.response.status isnt 500
+            return reject(err)
+          if n is 0 then return reject(err)
+          setTimeout(( -> wrappedFetch(--n)), retryDelay)
+        )
+      wrappedFetch(retries)
+    )
 
   ###*
    * Create the database on the server.
