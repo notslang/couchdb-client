@@ -372,25 +372,6 @@ class CouchDB
   # errors or nothing
   post: ->
 
-  ###*
-   * Get a single document from the database.
-   * @param {String} id Document id
-   * @param {String} [options.revision] The specific revision id to get.
-   * @return {Promise}
-  ###
-  getDoc: (id, {revision, revisionsInfo} = {}) =>
-    BPromise.resolve(
-      fetch(
-        "#{@url}/#{encodeURIComponent(id)}"
-        headers: @_getFetchOptions()
-        credentials: 'include'
-      )
-    ).then(
-      checkStatus
-    ).then((response) ->
-      response.json()
-    )
-
   # returns writeable stream where you pass in the ID and get out the doc
   get: ->
 

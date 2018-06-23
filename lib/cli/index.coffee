@@ -12,6 +12,7 @@ mkdb = require './mkdb'
 packageInfo = require '../../package'
 
 commands = [
+  require './get-doc'
   require './head-doc'
   require './ls'
   require './mkdb'
