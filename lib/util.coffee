@@ -1,6 +1,8 @@
 pickBy = require 'lodash/pickBy'
 queryString = require 'querystring'
 
+DB_NAME_RE = /^[a-z][a-z0-9_$()+/-]*$/
+
 buildQueryString = (options) ->
   if options.groupLevel?
     options['group_level'] = options.groupLevel
@@ -33,4 +35,9 @@ checkStatus = (response) ->
 
 getRequestId = ({headers}) -> headers.get('x-couch-request-id')
 
-module.exports = {buildQueryString, checkStatus, getRequestId}
+module.exports = {
+  DB_NAME_RE
+  buildQueryString
+  checkStatus
+  getRequestId
+}
