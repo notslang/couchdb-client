@@ -26,7 +26,7 @@ class CouchDB
       urlObj.pathname = '_replicator'
       @replicatorDB = new CouchDB(url.format(urlObj))
 
-  _getHeaders: ->
+  _getFetchOptions: ->
     headers =
       'Accept': 'application/json'
       'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ class CouchDB
     promise = fetch(
       @url
       method: 'PUT'
-      headers: @_getHeaders()
+      headers: @_getFetchOptions()
       credentials: 'include'
     ).then(
       checkStatus
@@ -92,7 +92,7 @@ class CouchDB
       return res
     )
     BPromise.resolve(
-      fetch(queryUrl, headers: @_getHeaders(), credentials: 'include')
+      fetch(queryUrl, headers: @_getFetchOptions(), credentials: 'include')
     ).then(
       checkStatus
     ).then((response) ->
@@ -118,7 +118,7 @@ class CouchDB
       )
 
     BPromise.resolve(
-      fetch(queryUrl, headers: @_getHeaders(), credentials: 'include')
+      fetch(queryUrl, headers: @_getFetchOptions(), credentials: 'include')
     ).then(
       checkStatus
     ).then((response) ->
@@ -187,7 +187,7 @@ class CouchDB
           "#{@url}/#{doc._id}"
           method: 'PUT'
           body: JSON.stringify(doc)
-          headers: @_getHeaders()
+          headers: @_getFetchOptions()
           credentials: 'include'
         )
       ).then(
@@ -213,7 +213,7 @@ class CouchDB
       "#{@url}/_bulk_docs"
       method: 'POST'
       body: "{\"docs\":#{docs}}"
-      headers: @_getHeaders()
+      headers: @_getFetchOptions()
       credentials: 'include'
     ).then(
       checkStatus
@@ -284,7 +284,7 @@ class CouchDB
         @url
         method: 'POST'
         body: JSON.stringify(doc)
-        headers: @_getHeaders()
+        headers: @_getFetchOptions()
         credentials: 'include'
       )
     ).then(
@@ -312,7 +312,7 @@ class CouchDB
     BPromise.resolve(
       fetch(
         "#{@url}/#{encodeURIComponent(id)}"
-        headers: @_getHeaders()
+        headers: @_getFetchOptions()
         credentials: 'include'
       )
     ).then(
@@ -335,7 +335,7 @@ class CouchDB
       fetch(
         "#{@url}/#{encodeURIComponent(id)}?rev=#{revision}"
         method: 'DELETE'
-        headers: @_getHeaders()
+        headers: @_getFetchOptions()
         credentials: 'include'
       )
     ).then(
@@ -446,7 +446,7 @@ class CouchDB
     fetch(
       @url
       method: 'GET'
-      headers: @_getHeaders()
+      headers: @_getFetchOptions()
       credentials: 'include'
     ).then(
       checkStatus
