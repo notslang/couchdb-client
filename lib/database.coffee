@@ -3,11 +3,9 @@ JSONStream = require 'JSONStream'
 fetch = require 'node-fetch'
 isEqual = require 'lodash/isEqual'
 map = require 'through2'
-pickBy = require 'lodash/pickBy'
-queryString = require 'querystring'
 url = require 'url'
 
-{checkStatus} = require './util'
+{buildQueryString, checkStatus} = require './util'
 
 REPLICATION_STATS_NAME_MAP =
   revisionsChecked: 'revisions_checked'
@@ -31,28 +29,6 @@ DB_STATS_NAME_MAP =
   updateSeq: 'update_seq'
 
 DB_NOT_FOUND_RE = /^db_not_found: /
-
-buildQueryString = (options) ->
-  if options.groupLevel?
-    options['group_level'] = options.groupLevel
-    delete options.groupLevel
-
-  if options.includeDocs?
-    options['include_docs'] = options.includeDocs
-    delete options.includeDocs
-
-  if Array.isArray(options.endkey)
-    options.endkey = JSON.stringify(options.endkey)
-
-  if Array.isArray(options.startkey)
-    options.startkey = JSON.stringify(options.startkey)
-
-  # remove undefined vars because `queryString.stringify` doesn't like them
-  options = pickBy(options, (value) -> value?)
-  if Object.keys(options).length > 0
-    '?' + queryString.stringify(options)
-  else
-    ''
 
 class CouchDB
   auth: ''
