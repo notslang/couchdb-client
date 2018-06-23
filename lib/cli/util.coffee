@@ -16,7 +16,7 @@ databaseListArg = (parser) ->
   )
 
 handlePromisedJson = (res) ->
-  console.log(JSON.stringify(res, null, 2))
+  console.log(JSON.stringify(res))
 
 humanReadableArg = (parser) ->
   parser.addArgument(

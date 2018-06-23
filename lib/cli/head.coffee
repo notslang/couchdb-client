@@ -11,7 +11,7 @@ addCommand = (argparser) ->
   subcommand = argparser.addParser(
     command
     addHelp: true
-    description: 'Get 1 or more documents using HEAD.'
+    description: 'Check a document using HEAD.'
   )
   subcommand.addArgument(
     'db'
@@ -19,18 +19,13 @@ addCommand = (argparser) ->
     metavar: 'DATABASE'
   )
   subcommand.addArgument(
-    'ids'
-    help: 'The _ids of the documents to get the HEAD of.'
+    'id'
+    help: 'The _id of the document to check.'
     metavar: 'DOCUMENT'
-    nargs: '+'
   )
 
-run = ({db, url, ids}) ->
+run = ({db, url, id}) ->
   db = new CouchDB("#{url}/#{db}")
-  BPromise.map(ids, (id) ->
-    headDoc(db, id)
-  ).then(
-    handlePromisedJson
-  )
+  headDoc(db, id).then(handlePromisedJson)
 
 module.exports = {addCommand, command, run}
