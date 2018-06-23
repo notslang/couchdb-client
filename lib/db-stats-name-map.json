@@ -1,0 +1,13 @@
+{
+  "committedUpdateSeq": "committed_update_seq",
+  "compactRunning": "compact_running",
+  "dataSize": "data_size",
+  "dbName": "db_name",
+  "diskFormatVersion": "disk_format_version",
+  "diskSize": "disk_size",
+  "docCount": "doc_count",
+  "docDelCount": "doc_del_count",
+  "instanceStartTime": "instance_start_time",
+  "purgeSeq": "purge_seq",
+  "updateSeq": "update_seq"
+}

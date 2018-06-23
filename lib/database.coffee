@@ -7,27 +7,8 @@ url = require 'url'
 
 {buildQueryString, checkStatus} = require './util'
 
-REPLICATION_STATS_NAME_MAP =
-  revisionsChecked: 'revisions_checked'
-  missingRevisionsFound: 'missing_revisions_found'
-  docsRead: 'docs_read'
-  docsWritten: 'docs_written'
-  docWriteFailures: 'doc_write_failures'
-  checkpointedSourceSeq: 'checkpointed_source_seq'
-
-DB_STATS_NAME_MAP =
-  committedUpdateSeq: 'committed_update_seq'
-  compactRunning: 'compact_running'
-  dataSize: 'data_size'
-  dbName: 'db_name'
-  diskFormatVersion: 'disk_format_version'
-  diskSize: 'disk_size'
-  docCount: 'doc_count'
-  docDelCount: 'doc_del_count'
-  instanceStartTime: 'instance_start_time'
-  purgeSeq: 'purge_seq'
-  updateSeq: 'update_seq'
-
+REPLICATION_STATS_NAME_MAP = require './replication-stats-name-map'
+DB_STATS_NAME_MAP = require './db-stats-name-map'
 DB_NOT_FOUND_RE = /^db_not_found: /
 
 class CouchDB

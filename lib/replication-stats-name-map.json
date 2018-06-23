@@ -1,0 +1,8 @@
+{
+  "revisionsChecked": "revisions_checked",
+  "missingRevisionsFound": "missing_revisions_found",
+  "docsRead": "docs_read",
+  "docsWritten": "docs_written",
+  "docWriteFailures": "doc_write_failures",
+  "checkpointedSourceSeq": "checkpointed_source_seq"
+}
