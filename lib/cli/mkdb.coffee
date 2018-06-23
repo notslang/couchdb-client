@@ -1,6 +1,7 @@
 BPromise = require 'bluebird'
 
 CouchDB = require '../database'
+create = require '../create'
 
 command = 'mkdb'
 
@@ -22,10 +23,23 @@ addCommand = (argparser) ->
     dest: 'errorIfExists'
     help: 'Don\'t ignore the database already existing.'
   )
+  subcommand.addArgument(
+    ['--replicas']
+    type: 'int'
+    dest: 'replicas'
+    help: 'Number of copies there are of every document.'
+  )
+  subcommand.addArgument(
+    ['--shards']
+    type: 'int'
+    dest: 'shards'
+    help: 'Number of shards.'
+  )
 
-run = ({dbs, errorIfExists, url}) ->
-  BPromise.map(dbs, (db) ->
-    (new CouchDB("#{url}/#{db}")).createDatabase(errorIfExists)
+run = ({dbs, url, errorIfExists, replicas, shards}) ->
+  BPromise.map(dbs, (dbName) ->
+    db = new CouchDB("#{url}/#{dbName}")
+    create(db, {errorIfExists, replicas, shards})
   )
 
 module.exports = {addCommand, command, run}

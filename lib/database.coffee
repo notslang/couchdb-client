@@ -129,30 +129,6 @@ class CouchDB
     )
 
   ###*
-   * Create the database on the server.
-   * @param {Boolean} [options.errorIfExists = false] By default, we ignore
-     whether or not the database already exists. Setting this to true will cause
-     an error to be thrown if the database has already been created.
-   * @return {Promise}
-  ###
-  createDatabase: ({errorIfExists} = {}) =>
-    errorIfExists ?= false
-    promise = fetch(
-      @url
-      method: 'PUT'
-      headers: @_getFetchOptions()
-      credentials: 'include'
-    ).then(
-      checkStatus
-    )
-    if not errorIfExists
-      promise = promise.catch((err) ->
-        # ignore "database already exists"
-        if err.response.status isnt 412 then throw err
-      )
-    return promise
-
-  ###*
    * Query the database
    * @param {[type]} view [description]
    * @return {Stream} A stream containing the results of the query.
