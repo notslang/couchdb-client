@@ -1,11 +1,13 @@
+{getRequestId} = require './util'
+
 headDoc = (db, id) ->
   db._fetch(
     "#{encodeURIComponent(id)}"
     method: 'HEAD'
-  ).then(({status, headers}) ->
+  ).then((response) ->
     {
-      status
-      requestId: headers.get('x-couch-request-id')
+      status: response.status
+      requestId: getRequestId(response)
     }
   )
 

@@ -31,4 +31,6 @@ buildQueryString = (options) ->
   else
     ''
 
-module.exports = {buildQueryString, checkStatus}
+getRequestId = ({headers}) -> headers.get('x-couch-request-id')
+
+module.exports = {buildQueryString, checkStatus, getRequestId}
