@@ -1,3 +1,4 @@
+BPromise = require 'bluebird'
 should = require 'should'
 
 CouchDB = require '../lib/database'
@@ -14,3 +15,15 @@ describe 'CouchDB constructor', ->
   it 'should parse dbName', ->
     db = new CouchDB('http://root:mypassword@localhost:5984/test-db')
     db.dbName.should.equal 'test-db'
+
+  it 'should set a default sessionTimeout', ->
+    db = new CouchDB('http://root:mypassword@localhost:5984/test-db')
+    db.sessionTimeout.should.equal 600000
+
+  it 'should accept sessionTimeout values', ->
+    value = 1234567
+    db = new CouchDB(
+      'http://root:mypassword@localhost:5984/test-db'
+      sessionTimeout: value
+    )
+    db.sessionTimeout.should.equal value
