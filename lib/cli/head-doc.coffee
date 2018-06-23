@@ -5,7 +5,7 @@ JSONStream = require 'JSONStream'
 CouchDB = require '../database'
 headDoc = require '../head-doc'
 
-command = 'head'
+command = 'head-doc'
 
 addCommand = (argparser) ->
   subcommand = argparser.addParser(
