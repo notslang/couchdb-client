@@ -343,20 +343,6 @@ class CouchDB
   # returns writeable stream where you pass in the ID and get out the doc
   get: ->
 
-  headDoc: (id) =>
-    BPromise.resolve(
-      fetch(
-        "#{@url}/#{encodeURIComponent(id)}"
-        credentials: 'include'
-        headers: @_getHeaders()
-        method: 'HEAD'
-      )
-    ).then(
-      checkStatus
-    ).then((response) ->
-      {}
-    )
-
   ###*
    * Remove a single document from the database.
    * @param {String} id Document id
