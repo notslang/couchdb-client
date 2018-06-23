@@ -31,6 +31,6 @@
   "main": "lib",
   "repository": "git://github.com/slang800/couchdb-client.git",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test/*.coffee"
   }
 }
