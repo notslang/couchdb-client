@@ -1,14 +1,6 @@
 pickBy = require 'lodash/pickBy'
 queryString = require 'querystring'
 
-checkStatus = (response) ->
-  if response.status >= 200 and response.status < 300
-    return response
-  else
-    error = new Error(response.statusText)
-    error.response = response
-    throw error
-
 buildQueryString = (options) ->
   if options.groupLevel?
     options['group_level'] = options.groupLevel
@@ -30,6 +22,14 @@ buildQueryString = (options) ->
     '?' + queryString.stringify(options)
   else
     ''
+
+checkStatus = (response) ->
+  if response.status >= 200 and response.status < 300
+    return response
+  else
+    error = new Error(response.statusText)
+    error.response = response
+    throw error
 
 getRequestId = ({headers}) -> headers.get('x-couch-request-id')
 
