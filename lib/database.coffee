@@ -11,6 +11,10 @@ REPLICATION_STATS_NAME_MAP = require './replication-stats-name-map'
 DB_STATS_NAME_MAP = require './db-stats-name-map'
 DB_NOT_FOUND_RE = /^db_not_found: /
 
+# hardcoded for now
+MAX_RETRIES = 10
+RETRY_DELAY = 1000
+
 class CouchDB
   auth: null
   dbName: null
@@ -114,26 +118,18 @@ class CouchDB
    * @return {Promise}
   ###
   _fetch: (urlSegment, options = {}) =>
-    # hardcoded for now
-    retries = 10
-    retryDelay = 1000
-    new Promise((resolve, reject) =>
-      wrappedFetch = (n) =>
-        @_getFetchOptions(options).then((fetchOptions) =>
-          fetch(url.resolve(@url, urlSegment), fetchOptions)
-        ).then(
-          checkStatus
-        ).then(
-          resolve
-        ).catch((err) ->
-          err.retries = retries - n
-          if err.response?.status? and err.response.status isnt 500
-            return reject(err)
-          if n is 0 then return reject(err)
-          setTimeout(( -> wrappedFetch(--n)), retryDelay)
-        )
-      wrappedFetch(retries)
-    )
+    wrappedFetch = (n) =>
+      @_getFetchOptions(options).then((fetchOptions) =>
+        fetch(url.resolve(@url, urlSegment), fetchOptions)
+      ).then(
+        checkStatus
+      ).catch((err) ->
+        if n is 0 or (err.response?.status? and err.response.status isnt 500)
+          err.retries = MAX_RETRIES - n
+          return Promise.reject(err)
+        BPromise.delay(RETRY_DELAY).then( -> wrappedFetch(--n))
+      )
+    wrappedFetch(MAX_RETRIES)
 
   ###*
    * Query the database
