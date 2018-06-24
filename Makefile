@@ -2,14 +2,14 @@
 
 define DEVELOPMENT_BIN
 #!/usr/bin/env node
-require('coffee-script/register');
-require('../lib/cli');
+require('coffeescript/register')
+require('../lib/cli')
 endef
 export DEVELOPMENT_BIN
 
 define PRODUCTION_BIN
 #!/usr/bin/env node
-require('../lib/cli');
+require('../lib/cli')
 endef
 export PRODUCTION_BIN
 
