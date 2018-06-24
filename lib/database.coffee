@@ -266,7 +266,6 @@ class CouchDB
 
     map(objectMode: true, handleDoc, (cb) -> flushBuffer(cb, @push.bind(this)))
 
-
   ###*
    * Post a single document to the database.
    * @param {Object} doc The document to post. `doc._id` cannot be defined
@@ -297,13 +296,6 @@ class CouchDB
       return response
     )
 
-  # returns writeable stream, where you pass in the document object and get out
-  # errors or nothing
-  post: ->
-
-  # returns writeable stream where you pass in the ID and get out the doc
-  get: ->
-
   ###*
    * Remove a single document from the database.
    * @param {String} id Document id
@@ -328,9 +320,6 @@ class CouchDB
       delete response.id
       return response
     )
-
-  # returns writeable stream where you pass in the ID to delete
-  remove: ->
 
   getReplicationStatus: (id) =>
     @replicatorDB.getDoc(id).then((res) ->
@@ -415,10 +404,6 @@ class CouchDB
     ).then( ->
       stats
     )
-
-  compact: ->
-
-  viewCleanup: ->
 
   status: ->
     fetch(
