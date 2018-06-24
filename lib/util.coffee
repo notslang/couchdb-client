@@ -4,24 +4,53 @@ queryString = require 'querystring'
 DB_NAME_RE = /^[a-z][a-z0-9_$()+/-]*$/
 
 buildQueryString = (options) ->
-  if options.groupLevel?
-    options['group_level'] = options.groupLevel
-    delete options.groupLevel
+  {
+    _rev
+    batch
+    endkey
+    groupLevel
+    includeDocs
+    keys
+    limit
+    reads
+    replicas
+    shards
+    stale
+    startkey
+    writes
+  } = options
+  searchObject = {limit}
 
-  if options.includeDocs?
-    options['include_docs'] = options.includeDocs
-    delete options.includeDocs
+  if reads? then searchObject.r = reads
+  if writes? then searchObject.w = writes
 
-  if Array.isArray(options.endkey)
-    options.endkey = JSON.stringify(options.endkey)
+  if replicas? then searchObject.n = replicas
+  if shards? then searchObject.q = shards
 
-  if Array.isArray(options.startkey)
-    options.startkey = JSON.stringify(options.startkey)
+  if _rev? then searchObject.rev = _rev
+  if groupLevel? then searchObject['group_level'] = groupLevel
+
+  # only include if it doesn't match the default
+  if includeDocs is true then searchObject['include_docs'] = true
+  if stale is true then searchObject.stale = 'ok'
+  if batch is true then searchObject.batch = 'ok'
+
+  if keys? and Array.isArray(keys)
+    if keys.length is 1
+      searchObject.key =  JSON.stringify keys[0]
+    else
+      searchObject.keys = JSON.stringify keys
+
+  if endkey? and Array.isArray(endkey)
+    searchObject.endkey = JSON.stringify endkey
+
+  if startkey? and Array.isArray(startkey)
+    searchObject.startkey = JSON.stringify startkey
 
   # remove undefined vars because `queryString.stringify` doesn't like them
-  options = pickBy(options, (value) -> value?)
-  if Object.keys(options).length > 0
-    '?' + queryString.stringify(options)
+  searchObject = pickBy(searchObject, (value) -> value?)
+  if Object.keys(searchObject).length > 0
+    '?' + queryString.stringify(searchObject)
   else
     ''
 
@@ -43,6 +72,21 @@ checkStatus = (response) ->
     error.response = response
     throw error
 
+fixResponseStatus = (response) ->
+  # this property is useless, we have a status code right in the headers
+  delete response.ok
+
+  response._id = response.id
+  delete response.id
+
+  if response.rev?
+    response._rev = response.rev
+    delete response.rev
+  if response.error is 'conflict' and
+     response.reason is 'Document update conflict.'
+    delete response.reason
+  return response
+
 getRequestId = ({headers}) -> headers.get('x-couch-request-id')
 
 module.exports = {
@@ -50,5 +94,6 @@ module.exports = {
   buildQueryString
   checkDoc
   checkStatus
+  fixResponseStatus
   getRequestId
 }
