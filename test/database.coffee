@@ -27,3 +27,20 @@ describe 'CouchDB constructor', ->
       sessionTimeout: value
     )
     db.sessionTimeout.should.equal value
+
+  it.skip 'should handle auth (merging requests)', ->
+    @timeout 10000
+    db = new CouchDB('http://root:mypassword@localhost:5984/test-db')
+    firstResponse = undefined
+    handleResponse = ({sessionCookie}) ->
+      sessionCookie.should.be.String()
+      firstResponse ?= sessionCookie
+      firstResponse.should.equal(sessionCookie)
+
+    BPromise.all([
+      db._cookieAuth().then(handleResponse)
+      db._cookieAuth().then(handleResponse)
+      db._cookieAuth().then(handleResponse)
+    ]).delay(1000).then( ->
+      db._cookieAuth().then(handleResponse)
+    )
