@@ -80,12 +80,19 @@ class CouchDB
       @_updateCookieAuth().then(({sessionCookie}) =>
         @_sessionCookie = sessionCookie
         @_sessionStartTime = Date.now()
-        resolve({sessionCookie}) for resolve in @_outstandingCookieAuthRequests
+        resolve({sessionCookie}) for {resolve} in @_outstandingCookieAuthRequests
         @_outstandingCookieAuthRequests = null
+        return
+      ).catch((err) =>
+        reject(err) for {reject} in @_outstandingCookieAuthRequests
+        @_outstandingCookieAuthRequests = null
+        return
       )
 
     # wait for the result of the request to `/_session` that we've already made
-    new Promise((resolve) => @_outstandingCookieAuthRequests.push(resolve))
+    new Promise((resolve, reject) =>
+      @_outstandingCookieAuthRequests.push({resolve, reject})
+    )
 
   # do the actual request
   _updateCookieAuth: =>
