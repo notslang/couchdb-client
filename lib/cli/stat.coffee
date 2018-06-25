@@ -7,6 +7,7 @@ pumpCb = require 'pump'
 CouchDB = require '../database'
 Server = require '../server'
 {databaseListArg, humanReadableArg} = require './util'
+status = require '../status'
 
 command = 'stat'
 pump = BPromise.promisify(pumpCb)
@@ -29,7 +30,11 @@ run = ({dbs, url}) ->
         from(dbs)
     )
     map(objectMode: true, (db, enc, cb) ->
-      (new CouchDB("#{url}/#{db}")).status().then((res) -> cb(null, res))
+      status(new CouchDB("#{url}/#{db}")).then((res) ->
+        cb(null, res)
+      ).catch((err) ->
+        cb(err)
+      )
     )
     JSONStream.stringify('[', ',\n', ']\n')
     process.stdout

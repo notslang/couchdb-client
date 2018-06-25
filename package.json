@@ -12,6 +12,8 @@
     "bluebird": "^3.5.1",
     "from2-array": "0.0.4",
     "lodash": "^4.17.10",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.mapkeys": "^4.6.0",
     "node-fetch": "^1.7.3",
     "pump": "^1.0.3",
     "through2": "^2.0.3"

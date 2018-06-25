@@ -8,7 +8,6 @@ url = require 'url'
 {buildQueryString, checkStatus} = require './util'
 
 REPLICATION_STATS_NAME_MAP = require './replication-stats-name-map'
-DB_STATS_NAME_MAP = require './db-stats-name-map'
 DB_NOT_FOUND_RE = /^db_not_found: /
 
 # hardcoded for now
@@ -403,28 +402,6 @@ class CouchDB
       @replicatorDB.removeDoc(stats._id, stats._rev)
     ).then( ->
       stats
-    )
-
-  status: ->
-    fetch(
-      @url
-      method: 'GET'
-      headers: @_getFetchOptions()
-      credentials: 'include'
-    ).then(
-      checkStatus
-    ).then((response) ->
-      response.json()
-    ).then((res) ->
-      status = {}
-      for newName, oldName of DB_STATS_NAME_MAP
-        status[newName] = res[oldName]
-
-      # instanceStartTime is in microseconds
-      status.instanceStartTime = new Date(
-        parseInt(status.instanceStartTime) / 1000
-      )
-      return status
     )
 
 module.exports = CouchDB
