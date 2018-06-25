@@ -13,11 +13,7 @@ addCommand = (argparser) ->
     addHelp: true
     description: 'Get a document using GET.'
   )
-  subcommand.addArgument(
-    'db'
-    help: 'The name of the database to get the doc from.'
-    metavar: 'DATABASE'
-  )
+  databaseArg(subcommand)
   subcommand.addArgument(
     'id'
     help: 'The _id of the document to get.'

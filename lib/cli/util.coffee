@@ -1,18 +1,17 @@
 databaseArg = (parser) ->
   parser.addArgument(
-    ['-d', '--database']
-    dest: 'db'
+    'db'
     help: 'The name of the database to use.'
-    required: true
+    metavar: 'DATABASE'
   )
 
 databaseListArg = (parser) ->
   parser.addArgument(
-    ['-d', '--database']
-    action: 'append'
-    dest: 'dbs'
+    'dbs'
     help: 'The name(s) of the database(s) to use. If omitted, all databases will
     be used.'
+    metavar: 'DATABASE'
+    nargs: '+'
   )
 
 handlePromisedJson = (res) ->
