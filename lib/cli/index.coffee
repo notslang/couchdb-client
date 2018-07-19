@@ -12,6 +12,7 @@ mkdb = require './mkdb'
 packageInfo = require '../../package'
 
 commands = [
+  require './exists-doc'
   require './get-doc'
   require './head-doc'
   require './ls'
@@ -19,8 +20,8 @@ commands = [
   require './put'
   require './query'
   require './rmdb'
-  require './stat'
   require './stat-server'
+  require './stat'
 ]
 argparser = new ArgumentParser(
   addHelp: true
