@@ -19,6 +19,7 @@ commands = [
   require './mkdb'
   require './put'
   require './query'
+  require './rm-doc'
   require './rmdb'
   require './stat-server'
   require './stat'
