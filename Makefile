@@ -1,25 +1,22 @@
-.PHONY: build unbuild
+.PHONY: build clean test
 
-define DEVELOPMENT_BIN
-#!/usr/bin/env node
-require('coffeescript/register')
-require('../lib/cli')
-endef
-export DEVELOPMENT_BIN
+lib/%.json: src/%.json
+	mkdir -p lib
+	cat "$<" | jq -c '.' > "$@"
 
-define PRODUCTION_BIN
-#!/usr/bin/env node
-require('../lib/cli')
-endef
-export PRODUCTION_BIN
+lib/%.js: src/%.coffee
+	mkdir -p $(dir $@)
+	echo "'use_strict'" \
+	| cat - "$<" \
+	| ./node_modules/.bin/coffee -b -c -s > "$@.tmp"
+	./node_modules/.bin/standard --fix --stdin < "$@.tmp" > "$@" || true
+	rm "$@.tmp"
 
-build:
-	cp -R lib src
-	./node_modules/.bin/coffee --bare --compile lib
-	find lib -iname "*.coffee" -exec rm '{}' ';'
-	echo "$$PRODUCTION_BIN" > ./bin/index.js
+build: $(patsubst src/%.coffee, lib/%.js, $(wildcard src/*.coffee src/**/*.coffee)) \
+       $(patsubst src/%, lib/%, $(wildcard src/*.json src/**/*.json))
 
-unbuild:
+clean:
 	rm -rf lib
-	mv src lib
-	echo "$$DEVELOPMENT_BIN" > ./bin/index.js
+
+test: build
+	./node_modules/.bin/mocha ./test/*.coffee

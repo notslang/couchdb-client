@@ -21,7 +21,8 @@
   "devDependencies": {
     "coffeescript": "^2.3.1",
     "mocha": "^5.2.0",
-    "should": "^13.2.1"
+    "should": "^13.2.1",
+    "standard": "^11.0.1"
   },
   "keywords": [
     "couchdb",
@@ -33,6 +34,6 @@
   "main": "lib",
   "repository": "git://github.com/slang800/couchdb-client.git",
   "scripts": {
-    "test": "mocha test/*.coffee"
+    "test": "make test"
   }
 }
