@@ -1,7 +1,6 @@
 BPromise = require 'bluebird'
 JSONStream = require 'JSONStream'
 fetch = require 'node-fetch'
-isEqual = require 'lodash/isEqual'
 map = require 'through2'
 url = require 'url'
 

@@ -1,3 +1,4 @@
+BPromise = require 'bluebird'
 isEqual = require 'lodash/isEqual'
 
 getDoc = require './get-doc'

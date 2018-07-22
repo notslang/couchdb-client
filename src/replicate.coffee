@@ -1,3 +1,5 @@
+BPromise = require 'bluebird'
+
 REPLICATION_STATS_NAME_MAP = require './replication-stats-name-map'
 
 DB_NOT_FOUND_RE = /^db_not_found: /

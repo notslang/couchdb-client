@@ -1,14 +1,6 @@
-BPromise = require 'bluebird'
-JSONStream = require 'JSONStream'
-find = require 'lodash/find'
-from = require 'from2-array'
-
 {ArgumentParser} = require 'argparse'
+find = require 'lodash/find'
 
-CouchDB = require '../database'
-Server = require '../server'
-ls = require './ls'
-mkdb = require './mkdb'
 packageInfo = require '../../package'
 
 commands = [

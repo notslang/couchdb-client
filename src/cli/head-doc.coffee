@@ -1,6 +1,3 @@
-BPromise = require 'bluebird'
-JSONStream = require 'JSONStream'
-
 {databaseArg, handlePromisedJson} = require './util'
 CouchDB = require '../database'
 headDoc = require '../head-doc'
