@@ -269,7 +269,7 @@ class CouchDB
    * @return {Promise}
   ###
   postDoc: (doc) ->
-    if id?
+    if doc._id?
       return BPromise.reject("You have passed a doc._id. Since you know the _id,
       you should use PUT, rather than POST.")
 

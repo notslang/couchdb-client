@@ -8,7 +8,7 @@ command = 'ls'
 pump = BPromise.promisify(pumpCb)
 
 addCommand = (argparser) ->
-  subcommand = argparser.addParser(
+  argparser.addParser(
     command
     addHelp: true
     description: 'List all the databases on the server.'

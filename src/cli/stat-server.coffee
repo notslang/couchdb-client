@@ -4,7 +4,7 @@ Server = require '../server'
 command = 'stat-server'
 
 addCommand = (argparser) ->
-  subcommand = argparser.addParser(
+  argparser.addParser(
     command
     addHelp: true
     description: 'Print stats for the server itself.'

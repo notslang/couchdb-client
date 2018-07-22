@@ -76,7 +76,7 @@ replicate = (db, {target, source, createTarget}) ->
 
   stats = undefined
   @replicatorDB.postDoc(jobDoc).then((res) =>
-    @pollTillReplicationCompleted(res._id)
+    pollTillReplicationCompleted(res._id)
   ).then((statsObj) =>
     stats = statsObj
     @replicatorDB.removeDoc(stats._id, stats._rev)
