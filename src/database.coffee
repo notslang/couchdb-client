@@ -56,7 +56,7 @@ class CouchDB
 
     if authType is 'basic'
       options.headers['Authorization'] = (
-        "Basic #{new Buffer(@auth).toString('base64')}"
+        "Basic #{Buffer.from(@auth).toString('base64')}"
       )
       options.credentials ?= 'include'
     Promise.resolve(options)

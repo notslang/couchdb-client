@@ -21,7 +21,7 @@ class Server
       'Accept': 'application/json'
       'Content-Type': 'application/json'
     if @auth?
-      headers['Authorization'] = "Basic #{new Buffer(@auth).toString('base64')}"
+      headers['Authorization'] = "Basic #{Buffer.from(@auth).toString('base64')}"
     return headers
 
   list: ->
